@@ -1,0 +1,74 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: false
+      - run: uvx ruff check packages/ scripts/ tests/
+
+  validate:
+    # The catalogue as Claude Code reads it when someone browses it.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install -g @anthropic-ai/claude-code
+      - run: claude plugin validate .
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      # One Python version failing says nothing about the others; see them all.
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: false
+      - run: uv venv --python ${{ matrix.python }}
+      - run: uv pip install -e "packages/plugin-hub[test]"
+      # Offline: catalogue building, plugins.toml, generated files, sync plans.
+      - run: uv run pytest packages/plugin-hub -q
+      # The release tooling, against throwaway git repos.
+      - run: uv run pytest tests -q
+
+  version-bumps:
+    # A change to the package's code must bump its version, or nobody running a
+    # pinned tag would ever receive it -- and nothing else would notice.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - run: python3 scripts/versions.py check-bumps --base "origin/${{ github.base_ref }}"
+
+  install-from-git:
+    # What a user gets from the uvx line in the README.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: false
+      # On a pull request github.sha is a synthetic merge commit. Pin to the
+      # branch head instead, so what is tested is what was pushed.
+      - id: rev
+        run: |
+          echo "sha=${{ github.event.pull_request.head.sha || github.sha }}" >> "$GITHUB_OUTPUT"
+      - run: |
+          uvx --from "git+https://github.com/${{ github.repository }}@${{ steps.rev.outputs.sha }}#subdirectory=packages/plugin-hub" \
+            plugin-hub --version

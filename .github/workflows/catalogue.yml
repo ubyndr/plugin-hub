@@ -1,0 +1,53 @@
+name: catalogue
+
+# Rebuild .claude-plugin/marketplace.json from every repo in sources.toml.
+#
+# The catalogue lists which plugins exist and where, not their versions --
+# releases are read from tags when someone asks -- so it only changes when a
+# source repo adds, removes, renames or re-describes a plugin. Daily is enough;
+# run it by hand to pick a new plugin up at once:
+#
+#   gh workflow run catalogue.yml
+
+on:
+  schedule:
+    - cron: "41 4 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [sources.toml]
+
+concurrency:
+  group: catalogue
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install -g @anthropic-ai/claude-code
+      # Fails, and commits nothing, when two source repos use one plugin name.
+      - run: uvx --from ./packages/plugin-hub plugin-hub catalogue
+      - run: claude plugin validate .
+      - name: Commit if changed
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- .claude-plugin/marketplace.json; then
+            echo "Catalogue unchanged." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git diff --stat -- .claude-plugin/marketplace.json >> "$GITHUB_STEP_SUMMARY"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Rebuild the catalogue from sources.toml" -- .claude-plugin/marketplace.json
+          git push

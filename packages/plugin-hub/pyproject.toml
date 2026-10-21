@@ -1,0 +1,30 @@
+[project]
+name = "plugin-hub"
+version = "0.1.0"
+description = "Pin a project's Claude Code plugins, from any number of plugin repos, in one plugins.toml; generate the project's own marketplace from it, and install exactly that."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Cellular Semantics" }]
+# Standard library only: it runs through `uvx` on every teammate's machine, and
+# shells out to `git` and `claude` for everything that touches a repo.
+dependencies = []
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+]
+
+[project.scripts]
+plugin-hub = "plugin_hub.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/ubyndr/plugin-hub"
+Repository = "https://github.com/ubyndr/plugin-hub"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

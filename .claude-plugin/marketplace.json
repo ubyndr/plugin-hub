@@ -1,0 +1,72 @@
+{
+  "name": "plugin-hub",
+  "owner": {
+    "name": "Cellular Semantics",
+    "url": "https://github.com/Cellular-Semantics"
+  },
+  "metadata": {
+    "description": "Every Claude Code plugin Cellular Semantics manages, across all of its plugin repos. Browse here; pin per project with plugin-hub. Generated from sources.toml; do not edit."
+  },
+  "plugins": [
+    {
+      "name": "atlas-tools",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/ubyndr/atlas-skills-release-test.git",
+        "path": "plugins/atlas-tools"
+      },
+      "description": "Convenience bundle: both h5ad plugins together. Carries no skills of its own.",
+      "homepage": "https://github.com/ubyndr/atlas-skills-release-test"
+    },
+    {
+      "name": "author-annotation-columns",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/ubyndr/atlas-skills-release-test.git",
+        "path": "plugins/author-annotation-columns"
+      },
+      "description": "Find which obs columns hold the authors' own cell-type, tissue, developmental-stage and disease annotations, as opposed to the portal's standardised fields, cluster indices and QC.",
+      "homepage": "https://github.com/ubyndr/atlas-skills-release-test"
+    },
+    {
+      "name": "cap-tools",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Cellular-Semantics/cap_skills.git",
+        "path": "plugins/cap-tools"
+      },
+      "description": "Search CAP's dataset catalogue, pull differential expression, and check per-cell-type gene expression.",
+      "homepage": "https://github.com/Cellular-Semantics/cap_skills"
+    },
+    {
+      "name": "onto-mapping",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/ubyndr/atlas-skills-release-test.git",
+        "path": "plugins/onto-mapping"
+      },
+      "description": "Map annotator-written tissue, cell-type and developmental-stage strings to ontology terms from lexical and graph evidence, with per-ontology advice documents for the conventions that produce confidently wrong answers.",
+      "homepage": "https://github.com/ubyndr/atlas-skills-release-test"
+    },
+    {
+      "name": "paper-access",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/ubyndr/atlas-skills-release-test.git",
+        "path": "plugins/paper-access"
+      },
+      "description": "Retrieve papers as tagged article XML where it can be had, probe how much of each a search index holds, fetch their supplementary material, and say honestly which papers and files nobody can reach.",
+      "homepage": "https://github.com/ubyndr/atlas-skills-release-test"
+    },
+    {
+      "name": "remote-h5ad-obs",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/ubyndr/atlas-skills-release-test.git",
+        "path": "plugins/remote-h5ad-obs"
+      },
+      "description": "Read the per-cell obs table out of a remote h5ad over HTTP range requests, without downloading the expression matrix.",
+      "homepage": "https://github.com/ubyndr/atlas-skills-release-test"
+    }
+  ]
+}

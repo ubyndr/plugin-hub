@@ -1,0 +1,12 @@
+# The plugin repos the catalogue is built from. Each must keep a
+# .claude-plugin/marketplace.json at its root. The `catalogue` workflow rebuilds
+# .claude-plugin/marketplace.json from these daily; add a repo here and it is
+# in the catalogue by the next run (or `gh workflow run catalogue.yml`).
+#
+# Optional per source: ref = "<branch or tag>" (default: the default branch).
+
+[[source]]
+repo = "Cellular-Semantics/cap_skills"
+
+[[source]]
+repo = "ubyndr/atlas-skills-release-test"
